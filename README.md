@@ -1,5 +1,7 @@
 # Smart Bin IoT Monitoring System
+
 ## Overview
+
 Smart Bin เป็นระบบตรวจวัดระดับขยะอัจฉริยะโดยใช้ ESP32-C3 และ Ultrasonic Sensor HC-SR04 สำหรับวัดระดับขยะภายในถัง พร้อมส่งข้อมูลแบบ Real-time ไปยัง Discord และ Google Sheets เพื่อใช้ในการติดตามและวิเคราะห์ปริมาณขยะ
 
 ---
@@ -27,6 +29,7 @@ Smart Bin เป็นระบบตรวจวัดระดับขยะ�
 ---
 
 ## Wiring Diagram
+
 | HC-SR04 | ESP32-C3                    |
 | ------- | --------------------------- |
 | VCC     | 5V                          |
@@ -39,6 +42,7 @@ Smart Bin เป็นระบบตรวจวัดระดับขยะ�
 ---
 
 ## System Workflow
+
 1. HC-SR04 ตรวจวัดระยะห่างระหว่างเซนเซอร์กับขยะ
 2. ESP32-C3 คำนวณระดับความเต็มของถัง (%)
 3. ระบบคำนวณ Rate และ Time To Full
@@ -49,41 +53,62 @@ Smart Bin เป็นระบบตรวจวัดระดับขยะ�
 ---
 
 ## Installation
+
 ### 1. Clone Repository
 
+```bash
 git clone https://github.com/Dorm6159/SmartBin.git
+```
 
 ---
 
 ### 2. Open Project in VS Code
+
 ติดตั้ง Extensions:
+
 * PlatformIO IDE
 * Wokwi Simulator
 
 ---
 
 ### 3. Build Project
+
+```bash
 pio run
+```
 
 ---
 
 ### 4. Run Simulation
+
+```bash
 Wokwi: Start Simulator
+```
 
 ---
 
 ## Google Apps Script Setup
+
 ### 1. Create Google Sheets
+
 สร้าง Google Sheets ใหม่ แล้วตั้งชื่อคอลัมน์ดังนี้:
+
 | Time | Level | Distance | Rate | TTF |
 | ---- | ----- | -------- | ---- | --- |
 
 ---
 
 ### 2. Open Apps Script
-ไปที่: Extensions → Apps Script
+
+ไปที่:
+
+```text
+Extensions → Apps Script
+```
+
 ลบโค้ดเดิมทั้งหมด แล้วใส่โค้ดนี้:
 
+```javascript
 function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
 
@@ -102,32 +127,65 @@ function doGet(e) {
 
   return ContentService.createTextOutput("OK");
 }
-------
+```
+
+---
 
 ### 3. Deploy Web App
+
 1. กด `Deploy`
 2. เลือก `New Deployment`
 3. เลือก `Web App`
 4. ตั้งค่า:
+
+```text
 Execute as: Me
 Who has access: Anyone
+```
 
-6. กด Deploy
-7. Copy URL ที่ได้
-ตัวอย่าง: https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
-นำไปใส่ใน: String sheetURL = "YOUR_SCRIPT_URL";
+5. กด Deploy
+6. Copy URL ที่ได้
+
+ตัวอย่าง:
+
+```text
+https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
+```
+
+นำไปใส่ใน:
+
+```cpp
+String sheetURL = "YOUR_SCRIPT_URL";
+```
+
 ---
+
 ## Discord Webhook Setup
+
 ### 1. Create Webhook
+
 1. เปิด Discord Server
-2. ไปที่: Server Settings → Integrations → Webhooks
+2. ไปที่:
+
+```text
+Server Settings → Integrations → Webhooks
+```
 
 3. กด `New Webhook`
 4. Copy Webhook URL
-ตัวอย่าง: https://discord.com/api/webhooks/xxxxxxxxx
+
+ตัวอย่าง:
+
+```text
+https://discord.com/api/webhooks/xxxxxxxxx
+```
+
 นำไปใส่ใน:
+
+```cpp
 String webhook = "YOUR_WEBHOOK_URL";
 String webhookgraph = "YOUR_GRAPH_WEBHOOK_URL";
+```
 
 ---
 
@@ -136,35 +194,63 @@ String webhookgraph = "YOUR_GRAPH_WEBHOOK_URL";
 ### 1. Create Chart
 
 1. เลือกข้อมูลใน Google Sheets
-2. กด: Insert → Chart
+2. กด:
 
+```text
+Insert → Chart
+```
 
 3. เลือกประเภทกราฟตามต้องการ
+
+---
+
 ### 2. Publish Chart
+
 1. กดจุดสามจุดที่ Chart
 2. เลือก `Publish Chart`
 3. เลือก `Embed`
 4. Copy URL รูปภาพ
 
-ตัวอย่าง: https://docs.google.com/spreadsheets/d/e/xxxxxxxx/pubchart?oid=xxxx&format=image
-นำไปใส่ใน: String chartURL = "YOUR_CHART_URL";
+ตัวอย่าง:
+
+```text
+https://docs.google.com/spreadsheets/d/e/xxxxxxxx/pubchart?oid=xxxx&format=image
+```
+
+นำไปใส่ใน:
+
+```cpp
+String chartURL = "YOUR_CHART_URL";
+```
 
 ---
 
 ## Configuration
+
 แก้ไข URL ต่าง ๆ ภายใน `main.cpp`
+
+```cpp
 String webhook = "";
 String webhookgraph = "";
 String sheetURL = "";
 String chartURL = "";
+```
 
 ---
 
 ## Formula
+
 ### Fill Level
+
+```text
 Level = ((BinHeight - Distance) / BinHeight) × 100
+```
+
 ### Time To Full
+
+```text
 TTF = (100 - Level) / Rate
+```
 
 ---
 
@@ -179,6 +265,7 @@ TTF = (100 - Level) / Rate
 
 ## Project Structure
 
+```text
 SmartBin/
 │
 ├── src/
@@ -189,3 +276,5 @@ SmartBin/
 ├── wokwi.toml
 ├── README.md
 └── .gitignore
+```
+
